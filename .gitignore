@@ -22,3 +22,8 @@ build/
 
 # Logs
 *.log
+.swiftpm/
+*.xcodeproj/
+xcuserdata/
+.env*
+/shots/
