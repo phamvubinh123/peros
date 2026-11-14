@@ -29,26 +29,26 @@ struct TodayView: View {
         let doneCount = model.todayHours.count
         return HStack(alignment: .center) {
             Text("Today · \(Date.now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))")
-                .font(.subheadline.weight(.medium))
+                .font(.headline.weight(.medium))
                 .foregroundStyle(.secondary)
 
             Spacer()
 
             HStack(spacing: Space.sm) {
                 Text("Focused hours")
-                    .font(.caption.weight(.medium))
+                    .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
 
                 HStack(spacing: 4) {
                     ForEach(1...totalSlots, id: \.self) { idx in
                         Capsule()
                             .fill(idx <= doneCount ? Palette.accent : Surfaces.hairline)
-                            .frame(width: 24, height: 8)
+                            .frame(width: 28, height: 8)
                     }
                 }
 
                 Text("\(doneCount) / \(totalSlots)")
-                    .font(.caption.monospacedDigit().weight(.semibold))
+                    .font(.subheadline.monospacedDigit().weight(.semibold))
                     .foregroundStyle(.secondary)
             }
         }
@@ -59,9 +59,9 @@ struct TodayView: View {
             ForEach(FocusStep.allCases) { step in
                 let isActive = model.currentStep == step
                 Text(step.title)
-                    .font(.caption.weight(isActive ? .semibold : .medium))
+                    .font(.subheadline.weight(isActive ? .semibold : .medium))
                     .foregroundStyle(isActive ? Palette.onAccent : .secondary)
-                    .padding(.horizontal, Space.sm)
+                    .padding(.horizontal, Space.md)
                     .padding(.vertical, 8)
                     .background(
                         isActive ? Palette.accent : Surfaces.card,
@@ -94,25 +94,25 @@ struct TodayView: View {
         return HStack(alignment: .top, spacing: Space.lg) {
             VStack(alignment: .leading, spacing: Space.md) {
                 Text("HOUR \(model.activeSlotIndex) OF \(max(model.data.dailyGoal, 4))")
-                    .font(.caption.weight(.bold))
+                    .font(.subheadline.weight(.bold))
                     .foregroundStyle(Palette.accentText)
                     .tracking(0.8)
 
                 Text("What will exist at the end of this hour?")
-                    .font(.title2.weight(.bold))
+                    .font(.title.weight(.bold))
 
                 Text("One specific outcome. Not a topic. You should be able to say \"done\" or \"not done\" when the timer ends.")
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
 
                 VStack(alignment: .leading, spacing: Space.xs) {
                     Text("Outcome")
-                        .font(.caption.weight(.medium))
+                        .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
 
                     TextField("Untitled hour", text: $model.draftOutcome)
                         .textFieldStyle(.plain)
-                        .font(.body)
+                        .font(.title3)
                         .padding(Space.sm)
                         .background(Surfaces.card, in: RoundedRectangle(cornerRadius: Radius.sm))
                         .overlay(
@@ -123,7 +123,7 @@ struct TodayView: View {
 
                 VStack(alignment: .leading, spacing: Space.xs) {
                     Text("Name the thing you will have finished. A number helps.")
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
 
                     FlowExamples(examples: quickExamples) { example in
@@ -143,7 +143,7 @@ struct TodayView: View {
                     .controlSize(.large)
 
                     Text("Starts focus timer & tracks distractions locally.")
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
                 .padding(.top, Space.xs)
@@ -155,7 +155,7 @@ struct TodayView: View {
 
             VStack(alignment: .leading, spacing: Space.md) {
                 Text("Before you start")
-                    .font(.headline)
+                    .font(.title3.weight(.semibold))
 
                 VStack(alignment: .leading, spacing: Space.sm) {
                     ForEach(model.data.preflightItems) { item in
@@ -166,7 +166,7 @@ struct TodayView: View {
                                 Image(systemName: item.isCompleted ? "checkmark.square.fill" : "square")
                                     .foregroundStyle(item.isCompleted ? Palette.accent : .secondary)
                                 Text(item.title)
-                                    .font(.subheadline)
+                                    .font(.body)
                                     .foregroundStyle(.primary)
                                     .multilineTextAlignment(.leading)
                             }
@@ -179,14 +179,15 @@ struct TodayView: View {
 
                 VStack(alignment: .leading, spacing: Space.xs) {
                     Text("Reward after this hour")
-                        .font(.caption.weight(.medium))
+                        .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
 
                     TextField("Reward", text: $model.draftReward)
+                        .font(.body)
                         .textFieldStyle(.roundedBorder)
                 }
             }
-            .frame(width: 280, alignment: .leading)
+            .frame(width: 312, alignment: .leading)
             .padding(Space.lg)
             .background(Surfaces.card, in: RoundedRectangle(cornerRadius: Radius.md))
             .overlay(RoundedRectangle(cornerRadius: Radius.md).stroke(Surfaces.hairline, lineWidth: 1))
@@ -371,13 +372,13 @@ struct TodayView: View {
                 if let done = bySlot[slot] {
                     VStack(alignment: .leading, spacing: Space.xs) {
                         Text("HOUR \(slot) · \(done.finishedAt?.formatted(date: .omitted, time: .shortened) ?? "Done")")
-                            .font(.caption2.weight(.bold))
+                            .font(.caption.weight(.bold))
                             .foregroundStyle(.secondary)
                         Text(done.outcome)
-                            .font(.caption.weight(.medium))
+                            .font(.subheadline.weight(.medium))
                             .lineLimit(2)
                     }
-                    .frame(maxWidth: .infinity, minHeight: 72, alignment: .topLeading)
+                    .frame(maxWidth: .infinity, minHeight: 88, alignment: .topLeading)
                     .padding(Space.sm)
                     .background(Surfaces.stickyYellow, in: RoundedRectangle(cornerRadius: Radius.sm))
                     .overlay(RoundedRectangle(cornerRadius: Radius.sm).stroke(Surfaces.stickyYellowBorder, lineWidth: 1))
@@ -388,13 +389,13 @@ struct TodayView: View {
                     } label: {
                         VStack(alignment: .leading, spacing: Space.xs) {
                             Text(isCurrent ? "HOUR \(slot) · NOW" : "HOUR \(slot)")
-                                .font(.caption2.weight(.bold))
+                                .font(.caption.weight(.bold))
                                 .foregroundStyle(isCurrent ? Palette.accentText : .secondary)
                             Text(isCurrent ? "Choosing outcome..." : "Not planned yet")
-                                .font(.caption)
+                                .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
-                        .frame(maxWidth: .infinity, minHeight: 72, alignment: .topLeading)
+                        .frame(maxWidth: .infinity, minHeight: 88, alignment: .topLeading)
                         .padding(Space.sm)
                         .background(isCurrent ? Surfaces.card : Surfaces.cardMuted, in: RoundedRectangle(cornerRadius: Radius.sm))
                         .overlay(

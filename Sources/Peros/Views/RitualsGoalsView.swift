@@ -9,9 +9,9 @@ struct RitualsGoalsView: View {
             VStack(alignment: .leading, spacing: Space.lg) {
                 VStack(alignment: .leading, spacing: Space.xs) {
                     Text("Set up the day. Close it down.")
-                        .font(.largeTitle.weight(.bold))
+                        .font(.system(size: 32, weight: .bold))
                     Text("Your environment and habits should push you toward the next focused hour.")
-                        .font(.subheadline)
+                        .font(.body)
                         .foregroundStyle(.secondary)
                 }
 
@@ -50,13 +50,13 @@ struct RitualsGoalsView: View {
                             Image(systemName: item.isCompleted ? "checkmark.square.fill" : "square")
                                 .foregroundStyle(item.isCompleted ? Palette.accent : .secondary)
                             Text(item.title)
-                                .font(.subheadline)
+                                .font(.body)
                                 .foregroundStyle(.primary)
                                 .multilineTextAlignment(.leading)
                             Spacer()
                             if item.minutes > 0 {
                                 Text("\(item.minutes)m")
-                                    .font(.caption2.monospacedDigit())
+                                    .font(.caption.monospacedDigit())
                                     .foregroundStyle(.secondary)
                             }
                         }
@@ -92,11 +92,11 @@ struct RitualsGoalsView: View {
                 ForEach(model.data.fiveGoals.indices, id: \.self) { idx in
                     HStack(alignment: .firstTextBaseline, spacing: Space.xs) {
                         Text("\(idx + 1).")
-                            .font(.subheadline.monospacedDigit().weight(.semibold))
+                            .font(.body.monospacedDigit().weight(.semibold))
                             .foregroundStyle(.secondary)
                         TextField("Goal \(idx + 1)", text: $model.data.fiveGoals[idx])
                             .textFieldStyle(.plain)
-                            .font(.subheadline)
+                            .font(.body)
                             .onSubmit { model.save() }
                     }
                 }
@@ -167,7 +167,7 @@ struct RitualsGoalsView: View {
                             Image(systemName: item.isCompleted ? "checkmark.square.fill" : "square")
                                 .foregroundStyle(item.isCompleted ? Palette.accent : Surfaces.nightCardMuted)
                             Text(item.title)
-                                .font(.subheadline)
+                                .font(.body)
                                 .foregroundStyle(Surfaces.nightCardInk)
                                 .multilineTextAlignment(.leading)
                         }

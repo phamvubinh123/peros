@@ -23,9 +23,9 @@ struct PerosApp: App {
                 .environment(model)
                 .themed()
                 .overlay { if GridOverlay.enabled { GridOverlay() } }
-                .frame(minWidth: 940, minHeight: 620)
+                .frame(minWidth: 1020, minHeight: 680)
         }
-        .defaultSize(width: 1180, height: 760)
+        .defaultSize(width: 1320, height: 840)
         .windowToolbarStyle(.unified)
         .commands {
             SidebarCommands()

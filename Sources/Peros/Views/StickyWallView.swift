@@ -38,9 +38,9 @@ struct StickyWallView: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: Space.xs) {
                         Text("\(filteredHours.count) notes on the wall\(model.wallRange == .week ? " this week" : "")")
-                            .font(.largeTitle.weight(.bold))
+                            .font(.system(size: 32, weight: .bold))
                         Text("Every note is one finished hour. Evidence beats intention.")
-                            .font(.subheadline)
+                            .font(.body)
                             .foregroundStyle(.secondary)
                     }
 
@@ -78,10 +78,10 @@ struct StickyWallView: View {
     private func statBlock(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(.title3.weight(.bold).monospacedDigit())
+                .font(.title2.weight(.bold).monospacedDigit())
         }
     }
 
@@ -131,11 +131,11 @@ struct StickyWallView: View {
     private func stickyNoteCard(_ hour: FocusHourRecord) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(hour.finishedAt?.formatted(date: .omitted, time: .shortened) ?? "Hour \(hour.slotIndex)")
-                .font(.caption2.monospacedDigit())
+                .font(.caption.monospacedDigit())
                 .foregroundStyle(.secondary)
 
             Text(hour.outcome)
-                .font(.caption.weight(.semibold))
+                .font(.subheadline.weight(.semibold))
                 .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -143,17 +143,17 @@ struct StickyWallView: View {
 
             HStack {
                 Text("\(hour.distractionsCount) distr.")
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer()
                 if hour.result == .partly {
                     Text("partly")
-                        .font(.caption2.weight(.semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(Surfaces.partlyAmber)
                 }
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 88, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 100, alignment: .topLeading)
         .padding(Space.xs)
         .background(Surfaces.stickyYellow, in: RoundedRectangle(cornerRadius: Radius.xs))
         .overlay(RoundedRectangle(cornerRadius: Radius.xs).stroke(Surfaces.stickyYellowBorder, lineWidth: 1))

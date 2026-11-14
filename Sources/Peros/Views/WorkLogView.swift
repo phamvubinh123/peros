@@ -21,9 +21,9 @@ struct WorkLogView: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: Space.xs) {
                         Text("Every hour, on the record")
-                            .font(.largeTitle.weight(.bold))
+                            .font(.system(size: 32, weight: .bold))
                         Text("Date, outcome, distractions, finish time. Saved on this Mac. No form to fill.")
-                            .font(.subheadline)
+                            .font(.body)
                             .foregroundStyle(.secondary)
                     }
 
@@ -65,7 +65,7 @@ struct WorkLogView: View {
                 Text("Finished").frame(width: 72, alignment: .leading)
                 Text("Result").frame(width: 72, alignment: .trailing)
             }
-            .font(.caption.weight(.semibold))
+            .font(.subheadline.weight(.semibold))
             .foregroundStyle(.secondary)
             .padding(.horizontal, Space.md)
             .padding(.vertical, Space.sm)
@@ -79,28 +79,28 @@ struct WorkLogView: View {
                 ForEach(filteredHours) { hour in
                     HStack {
                         Text(hour.date.formatted(.dateTime.month(.abbreviated).day()))
-                            .font(.caption.monospacedDigit())
+                            .font(.subheadline.monospacedDigit())
                             .foregroundStyle(.secondary)
-                            .frame(width: 68, alignment: .leading)
+                            .frame(width: 72, alignment: .leading)
 
                         Text(hour.outcome)
-                            .font(.subheadline.weight(.medium))
+                            .font(.body.weight(.medium))
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         Text("\(hour.distractionsCount)")
-                            .font(.subheadline.monospacedDigit())
-                            .frame(width: 44, alignment: .trailing)
+                            .font(.body.monospacedDigit())
+                            .frame(width: 48, alignment: .trailing)
 
                         Text(hour.topCause.shortTitle)
-                            .font(.caption)
+                            .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            .frame(width: 92, alignment: .leading)
+                            .frame(width: 100, alignment: .leading)
 
                         Text(hour.finishedAt?.formatted(date: .omitted, time: .shortened) ?? "—")
-                            .font(.caption.monospacedDigit())
+                            .font(.subheadline.monospacedDigit())
                             .foregroundStyle(.secondary)
-                            .frame(width: 72, alignment: .leading)
+                            .frame(width: 76, alignment: .leading)
 
                         resultBadge(hour.result)
                             .frame(width: 72, alignment: .trailing)

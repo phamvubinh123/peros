@@ -10,15 +10,15 @@ struct ProgressDashboardView: View {
             VStack(alignment: .leading, spacing: Space.lg) {
                 VStack(alignment: .leading, spacing: Space.xs) {
                     Text("TRAIN FOCUS LIKE A SKILL")
-                        .font(.caption.weight(.bold))
+                        .font(.subheadline.weight(.bold))
                         .foregroundStyle(Palette.accentText)
                         .tracking(0.8)
 
                     Text("You are at \(summary.currentHoursPerDay) \(summary.currentHoursPerDay == 1 ? "hour" : "hours") a day")
-                        .font(.largeTitle.weight(.bold))
+                        .font(.system(size: 32, weight: .bold))
 
                     Text("Hit your level on 5 of the last 7 days and Peros offers the next one. Miss three days in a row and it suggests stepping back.")
-                        .font(.subheadline)
+                        .font(.body)
                         .foregroundStyle(.secondary)
                 }
 
@@ -66,11 +66,11 @@ struct ProgressDashboardView: View {
             }
 
             Text(tier.title)
-                .font(.subheadline.weight(.semibold))
+                .font(.headline)
                 .foregroundStyle(isCurrent ? Surfaces.nightCardInk : .primary)
 
             Text(tier.subtitle)
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(isCurrent ? Surfaces.nightCardMuted : .secondary)
                 .fixedSize(horizontal: false, vertical: true)
 

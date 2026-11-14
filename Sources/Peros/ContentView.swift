@@ -24,6 +24,8 @@ struct ContentView: View {
         return VStack(spacing: 0) {
             List(SidebarItem.allCases, selection: $model.sidebar) { page in
                 Label(page.title, systemImage: page.symbol)
+                    .font(.body)
+                    .padding(.vertical, 4)
                     .tag(page)
             }
 
@@ -33,22 +35,22 @@ struct ContentView: View {
                 .padding(.horizontal, Space.sm)
                 .padding(.bottom, Space.md)
         }
-        .navigationSplitViewColumnWidth(min: 200, ideal: 220)
+        .navigationSplitViewColumnWidth(min: 220, ideal: 248)
     }
 
     private var levelCard: some View {
         let summary = model.capacitySummary
         return VStack(alignment: .leading, spacing: Space.xs) {
             Text("CURRENT LEVEL")
-                .font(.caption2.weight(.semibold))
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .tracking(0.6)
 
             Text("\(summary.currentHoursPerDay) \(summary.currentHoursPerDay == 1 ? "hour" : "hours") / day")
-                .font(.title3.weight(.bold))
+                .font(.title2.weight(.bold))
 
             Text("\(summary.daysHitInLast7) of 5 days hit this week · \(summary.daysNeededToLevelUp) more to level up.")
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
