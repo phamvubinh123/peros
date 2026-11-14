@@ -42,6 +42,11 @@ enum SelfTest {
             model.finishBreakAndAdvance()
             check("finishing break returns to chooseOutcome", model.currentStep == .chooseOutcome)
 
+            model.dailyGoalChoice = 30
+            check("30m daily goal sets sessionMinutes to 30", model.data.sessionMinutes == 30 && model.data.dailyGoal == 1)
+            model.dailyGoalChoice = 180
+            check("3h daily goal sets dailyGoal to 3 and sessionMinutes to 60", model.data.dailyGoal == 3 && model.data.sessionMinutes == 60)
+
             // 2. PerosKit pure logic checks
             check("countdown formats 41:12", FocusAnalytics.formatCountdown(2472) == "41:12")
             check("countdown clamps negative", FocusAnalytics.formatCountdown(-10) == "00:00")

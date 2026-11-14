@@ -62,7 +62,9 @@ struct ContentView: View {
                 .foregroundStyle(.secondary)
                 .tracking(0.6)
 
-            Text("\(summary.currentHoursPerDay) \(model.t("giờ / ngày", summary.currentHoursPerDay == 1 ? "hour / day" : "hours / day"))")
+            Text(model.dailyGoalChoice == 30
+                 ? model.t("30 phút / ngày", "30 min / day")
+                 : "\(summary.currentHoursPerDay) \(model.t("giờ / ngày", summary.currentHoursPerDay == 1 ? "hour / day" : "hours / day"))")
                 .font(.title2.weight(.bold))
 
             Text(model.t(

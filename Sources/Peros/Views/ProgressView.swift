@@ -176,12 +176,12 @@ struct ProgressDashboardView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Picker(model.t("Mục tiêu mỗi ngày", "Daily goal"), selection: $model.data.dailyGoal) {
+            Picker(model.t("Mục tiêu mỗi ngày", "Daily goal"), selection: $model.dailyGoalChoice) {
+                Text(model.t("30 phút", "30 minutes")).tag(30)
                 ForEach(1...4, id: \.self) { hrs in
-                    Text("\(hrs) \(model.t("giờ", hrs == 1 ? "hour" : "hours"))").tag(hrs)
+                    Text("\(hrs) \(model.t("giờ", hrs == 1 ? "hour" : "hours"))").tag(hrs * 60)
                 }
             }
-            .onChange(of: model.data.dailyGoal) { _, _ in model.save() }
 
             Toggle(model.t("Tính cả cuối tuần", "Count weekends"), isOn: $model.data.countWeekends)
                 .onChange(of: model.data.countWeekends) { _, _ in model.save() }

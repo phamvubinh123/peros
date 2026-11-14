@@ -41,7 +41,7 @@ extension AppModel {
     func stepTitle(_ step: FocusStep) -> String {
         switch step {
         case .chooseOutcome: t("1  Chọn mục tiêu", "1  Choose outcome")
-        case .focus: t("2  Tập trung 60 phút", "2  Focus 60 min")
+        case .focus: t("2  Tập trung \(data.sessionMinutes) phút", "2  Focus \(data.sessionMinutes) min")
         case .record: t("3  Ghi nhận", "3  Record")
         case .restReview: t("4  Nghỉ & tổng kết", "4  Rest & review")
         }

@@ -112,7 +112,45 @@ struct PerosStoreData: Codable {
     var language: AppLanguage = .vi
     var hours: [FocusHourRecord] = []
     var dailyGoal: Int = 1
+    var sessionMinutes: Int = 60
     var countWeekends: Bool = true
+
+    enum CodingKeys: String, CodingKey {
+        case language, hours, dailyGoal, sessionMinutes, countWeekends, breakMinutes, autoLevelUp
+        case preflightItems, blockedSites, morningChecklist, nightChecklist, fiveGoals
+        case identityStatement, thoughtHabits, tomorrowFirstOutcome, hourRewards, crewMembers
+    }
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        language = try c.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .vi
+        hours = try c.decodeIfPresent([FocusHourRecord].self, forKey: .hours) ?? []
+        dailyGoal = try c.decodeIfPresent(Int.self, forKey: .dailyGoal) ?? 1
+        sessionMinutes = try c.decodeIfPresent(Int.self, forKey: .sessionMinutes) ?? 60
+        countWeekends = try c.decodeIfPresent(Bool.self, forKey: .countWeekends) ?? true
+        breakMinutes = try c.decodeIfPresent(Int.self, forKey: .breakMinutes) ?? 10
+        autoLevelUp = try c.decodeIfPresent(Bool.self, forKey: .autoLevelUp) ?? false
+        preflightItems = try c.decodeIfPresent([ChecklistItem].self, forKey: .preflightItems) ?? Self.defaultPreflight
+        blockedSites = try c.decodeIfPresent([String].self, forKey: .blockedSites) ?? ["x.com", "youtube.com", "reddit.com", "news.ycombinator.com"]
+        morningChecklist = try c.decodeIfPresent([ChecklistItem].self, forKey: .morningChecklist) ?? Self.defaultMorning
+        nightChecklist = try c.decodeIfPresent([ChecklistItem].self, forKey: .nightChecklist) ?? Self.defaultNight
+        fiveGoals = try c.decodeIfPresent([String].self, forKey: .fiveGoals) ?? Self.defaultFiveGoals
+        identityStatement = try c.decodeIfPresent(String.self, forKey: .identityStatement) ?? "I am someone who does the hard hour first."
+        thoughtHabits = try c.decodeIfPresent([String].self, forKey: .thoughtHabits) ?? ["\"Difficult\" means I am in the right place.", "Count it, then go back. No guilt."]
+        tomorrowFirstOutcome = try c.decodeIfPresent(String.self, forKey: .tomorrowFirstOutcome) ?? "Record module 2, lessons 1–3"
+        hourRewards = try c.decodeIfPresent([String].self, forKey: .hourRewards) ?? ["Beer on the balcony", "10-min walk", "One chapter of a novel", "Close the laptop for the day"]
+        crewMembers = try c.decodeIfPresent([CrewMember].self, forKey: .crewMembers) ?? Self.defaultCrew
+    }
+
+    static let defaultFiveGoals: [String] = [
+        "Ship the course by December 15",
+        "Reach your monthly revenue goal",
+        "Run a half-marathon in spring",
+        "Read 24 books this year",
+        "Publish one video every week",
+    ]
     var breakMinutes: Int = 10
     var autoLevelUp: Bool = false
     var preflightItems: [ChecklistItem] = PerosStoreData.defaultPreflight
@@ -263,15 +301,36 @@ final class AppModel {
         draftReward = rewardForSlot(next)
     }
 
+    var dailyGoalChoice: Int {
+        get {
+            (data.dailyGoal == 1 && data.sessionMinutes == 30) ? 30 : data.dailyGoal * 60
+        }
+        set {
+            if newValue == 30 {
+                data.dailyGoal = 1
+                data.sessionMinutes = 30
+            } else {
+                data.dailyGoal = max(1, min(4, newValue / 60))
+                data.sessionMinutes = 60
+            }
+            if currentStep == .chooseOutcome {
+                focusDurationSeconds = data.sessionMinutes * 60
+                remainingSeconds = focusDurationSeconds
+            }
+            save()
+        }
+    }
+
     // MARK: - Focus Lifecycle
 
-    func startFocusHour(durationSeconds: Int = 3600) {
+    func startFocusHour(durationSeconds: Int? = nil) {
+        let targetSeconds = durationSeconds ?? (data.sessionMinutes * 60)
         let cleaned = ItemTitle.clean(draftOutcome)
         draftOutcome = cleaned == "New Item" && draftOutcome.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? "Deep focus session"
             : cleaned
-        focusDurationSeconds = durationSeconds
-        remainingSeconds = durationSeconds
+        focusDurationSeconds = targetSeconds
+        remainingSeconds = targetSeconds
         activeDistractions = 0
         activeCauseCounts = [:]
         isTimerPaused = false

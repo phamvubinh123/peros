@@ -143,12 +143,24 @@ struct TodayView: View {
                     Button {
                         model.startFocusHour()
                     } label: {
-                        Label(model.t("Bắt đầu 60:00", "Start 60:00"), systemImage: "play.fill")
+                        Label(
+                            model.t("Bắt đầu \(model.data.sessionMinutes):00", "Start \(model.data.sessionMinutes):00"),
+                            systemImage: "play.fill"
+                        )
                             .padding(.horizontal, Space.sm)
                             .padding(.vertical, 4)
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
+
+                    Picker(model.t("Thời lượng", "Duration"), selection: $model.data.sessionMinutes) {
+                        Text("30m").tag(30)
+                        Text("60m").tag(60)
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .frame(width: 112)
+                    .onChange(of: model.data.sessionMinutes) { _, _ in model.save() }
 
                     Text(model.t("Bật đồng hồ đếm ngược & theo dõi xao nhãng cục bộ.", "Starts focus timer & tracks distractions locally."))
                         .font(.subheadline)
