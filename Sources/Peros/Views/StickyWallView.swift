@@ -62,7 +62,8 @@ struct StickyWallView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                .frame(width: 260)
+                .labelsHidden()
+                .frame(width: 280)
 
                 wallGrid
                     .frame(maxWidth: .infinity)
