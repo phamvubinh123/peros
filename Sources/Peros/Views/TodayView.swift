@@ -27,29 +27,34 @@ struct TodayView: View {
     private var headerBar: some View {
         let totalSlots = max(model.data.dailyGoal, 4)
         let doneCount = model.todayHours.count
-        return HStack(alignment: .center) {
-            Text("\(model.t("Hôm nay", "Today")) · \(Date.now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))")
-                .font(.headline.weight(.medium))
-                .foregroundStyle(.secondary)
+        return VStack(alignment: .leading, spacing: Space.xs) {
+            Text("Hello, Binh")
+                .font(.system(size: 32, weight: .bold))
 
-            Spacer()
-
-            HStack(spacing: Space.sm) {
-                Text(model.t("Giờ tập trung", "Focused hours"))
-                    .font(.subheadline.weight(.medium))
+            HStack(alignment: .center) {
+                Text("\(model.t("Hôm nay", "Today")) · \(Date.now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))")
+                    .font(.headline.weight(.medium))
                     .foregroundStyle(.secondary)
 
-                HStack(spacing: 4) {
-                    ForEach(1...totalSlots, id: \.self) { idx in
-                        Capsule()
-                            .fill(idx <= doneCount ? Palette.accent : Surfaces.hairline)
-                            .frame(width: 28, height: 8)
+                Spacer()
+
+                HStack(spacing: Space.sm) {
+                    Text(model.t("Giờ tập trung", "Focused hours"))
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.secondary)
+
+                    HStack(spacing: 4) {
+                        ForEach(1...totalSlots, id: \.self) { idx in
+                            Capsule()
+                                .fill(idx <= doneCount ? Palette.accent : Surfaces.hairline)
+                                .frame(width: 28, height: 8)
+                        }
                     }
-                }
 
-                Text("\(doneCount) / \(totalSlots)")
-                    .font(.subheadline.monospacedDigit().weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    Text("\(doneCount) / \(totalSlots)")
+                        .font(.subheadline.monospacedDigit().weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }

@@ -64,13 +64,8 @@ struct StickyWallView: View {
                 .pickerStyle(.segmented)
                 .frame(width: 260)
 
-                HStack(alignment: .top, spacing: Space.lg) {
-                    wallGrid
-                        .frame(maxWidth: .infinity)
-
-                    crewCard
-                        .frame(width: 256)
-                }
+                wallGrid
+                    .frame(maxWidth: .infinity)
             }
             .padding(Space.xl)
             .gridArea("stickyWall")

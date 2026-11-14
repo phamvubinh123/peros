@@ -133,7 +133,7 @@ struct PerosStoreData: Codable {
     ]
     var tomorrowFirstOutcome: String = "Record module 2, lessons 1–3"
     var hourRewards: [String] = [
-        "Coffee on the balcony",
+        "Beer on the balcony",
         "10-min walk",
         "One chapter of a novel",
         "Close the laptop for the day",
@@ -182,7 +182,7 @@ final class AppModel {
     var activeSlotIndex: Int = 1
     var currentStep: FocusStep = .chooseOutcome
     var draftOutcome: String = ""
-    var draftReward: String = "Coffee on the balcony"
+    var draftReward: String = "Beer on the balcony"
     var focusDurationSeconds: Int = 3600
     var remainingSeconds: Int = 3600
     var isTimerPaused: Bool = false
@@ -253,7 +253,7 @@ final class AppModel {
 
     func rewardForSlot(_ slot: Int) -> String {
         let index = max(0, min(data.hourRewards.count - 1, slot - 1))
-        return data.hourRewards.isEmpty ? "Coffee on the balcony" : data.hourRewards[index]
+        return data.hourRewards.isEmpty ? "Beer on the balcony" : data.hourRewards[index]
     }
 
     func syncNextSlotDefaults() {
