@@ -54,11 +54,27 @@ enum SettingsTab: String, CaseIterable, Identifiable {
 }
 
 struct GeneralSettings: View {
-    @AppStorage("confirmDelete") private var confirmDelete = true
+    @Environment(AppModel.self) private var model
 
     var body: some View {
-        Section("Items") {
-            Toggle("Ask before deleting items", isOn: $confirmDelete)
+        @Bindable var model = model
+        Section(model.t("Ngôn ngữ & Chung", "Language & General")) {
+            Picker(model.t("Ngôn ngữ", "Language"), selection: $model.data.language) {
+                ForEach(AppLanguage.allCases) { lang in
+                    Text(lang.displayName).tag(lang)
+                }
+            }
+            .onChange(of: model.data.language) { _, _ in model.save() }
+
+            Picker(model.t("Mục tiêu mỗi ngày", "Daily goal"), selection: $model.data.dailyGoal) {
+                ForEach(1...4, id: \.self) { hrs in
+                    Text("\(hrs) \(model.t("giờ", hrs == 1 ? "hour" : "hours"))").tag(hrs)
+                }
+            }
+            .onChange(of: model.data.dailyGoal) { _, _ in model.save() }
+
+            Toggle(model.t("Tính cả cuối tuần", "Count weekends"), isOn: $model.data.countWeekends)
+                .onChange(of: model.data.countWeekends) { _, _ in model.save() }
         }
     }
 }

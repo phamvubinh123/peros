@@ -10,6 +10,7 @@ enum SidebarItem: String, CaseIterable, Identifiable {
     case workLog
     case progress
     case ritualsGoals
+    case userGuide
 
     var id: String { rawValue }
 
@@ -20,6 +21,7 @@ enum SidebarItem: String, CaseIterable, Identifiable {
         case .workLog: "Work Log"
         case .progress: "Progress"
         case .ritualsGoals: "Rituals & Goals"
+        case .userGuide: "User Guide"
         }
     }
 
@@ -30,6 +32,7 @@ enum SidebarItem: String, CaseIterable, Identifiable {
         case .workLog: "list.bullet.rectangle"
         case .progress: "chart.bar"
         case .ritualsGoals: "sun.max"
+        case .userGuide: "book.closed"
         }
     }
 }
@@ -106,6 +109,7 @@ struct CrewMember: Identifiable, Codable, Hashable {
 }
 
 struct PerosStoreData: Codable {
+    var language: AppLanguage = .vi
     var hours: [FocusHourRecord] = []
     var dailyGoal: Int = 1
     var countWeekends: Bool = true

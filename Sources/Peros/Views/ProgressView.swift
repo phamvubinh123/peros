@@ -9,15 +9,21 @@ struct ProgressDashboardView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Space.lg) {
                 VStack(alignment: .leading, spacing: Space.xs) {
-                    Text("TRAIN FOCUS LIKE A SKILL")
+                    Text(model.t("RÈN LUYỆN SỰ TẬP TRUNG NHƯ MỘT KỸ NĂNG", "TRAIN FOCUS LIKE A SKILL"))
                         .font(.subheadline.weight(.bold))
                         .foregroundStyle(Palette.accentText)
                         .tracking(0.8)
 
-                    Text("You are at \(summary.currentHoursPerDay) \(summary.currentHoursPerDay == 1 ? "hour" : "hours") a day")
+                    Text(model.t(
+                        "Bạn đang ở mức \(summary.currentHoursPerDay) giờ mỗi ngày",
+                        "You are at \(summary.currentHoursPerDay) \(summary.currentHoursPerDay == 1 ? "hour" : "hours") a day"
+                    ))
                         .font(.system(size: 32, weight: .bold))
 
-                    Text("Hit your level on 5 of the last 7 days and Peros offers the next one. Miss three days in a row and it suggests stepping back.")
+                    Text(model.t(
+                        "Đạt mục tiêu 5 trong 7 ngày gần nhất để lên cấp tiếp theo. Nghỉ 3 ngày liên tiếp hệ thống sẽ gợi ý hạ nhẹ nhịp độ.",
+                        "Hit your level on 5 of the last 7 days and Peros offers the next one. Miss three days in a row and it suggests stepping back."
+                    ))
                         .font(.body)
                         .foregroundStyle(.secondary)
                 }
@@ -39,7 +45,7 @@ struct ProgressDashboardView: View {
             .padding(Space.xl)
             .gridArea("progress")
         }
-        .navigationTitle("Progress")
+        .navigationTitle(model.t("Tiến độ", "Progress"))
     }
 
     private func tierCard(_ tier: CapacityTier) -> some View {
@@ -54,7 +60,7 @@ struct ProgressDashboardView: View {
 
                 Spacer()
 
-                Text(isPassed ? "Passed" : (isCurrent ? "\(tier.daysHitInLast7) of \(tier.daysNeeded) days" : "Locked"))
+                Text(isPassed ? model.t("Đã đạt", "Passed") : (isCurrent ? "\(tier.daysHitInLast7)/\(tier.daysNeeded) \(model.t("ngày", "days"))" : model.t("Chưa mở", "Locked")))
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(isPassed ? Surfaces.passedGreen : (isCurrent ? Palette.onAccent : .secondary))
                     .padding(.horizontal, 8)
@@ -65,11 +71,11 @@ struct ProgressDashboardView: View {
                     )
             }
 
-            Text(tier.title)
+            Text(model.tierTitle(tier.hours))
                 .font(.headline)
                 .foregroundStyle(isCurrent ? Surfaces.nightCardInk : .primary)
 
-            Text(tier.subtitle)
+            Text(model.tierSubtitle(tier.hours))
                 .font(.subheadline)
                 .foregroundStyle(isCurrent ? Surfaces.nightCardMuted : .secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -103,10 +109,10 @@ struct ProgressDashboardView: View {
 
         return VStack(alignment: .leading, spacing: Space.md) {
             HStack {
-                Text("Last 12 weeks")
+                Text(model.t("12 tuần gần nhất", "Last 12 weeks"))
                     .font(.headline)
                 Spacer()
-                Text("\(totalHours) focused hours")
+                Text("\(totalHours) \(model.t("giờ tập trung", "focused hours"))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -160,31 +166,34 @@ struct ProgressDashboardView: View {
     private var standardsCard: some View {
         @Bindable var model = model
         return VStack(alignment: .leading, spacing: Space.md) {
-            Text("Your standard")
+            Text(model.t("Chuẩn của bạn", "Your standard"))
                 .font(.headline)
 
-            Text("Four hours a day is one person's standard, not a rule. Pick what fits your work and your recovery.")
+            Text(model.t(
+                "4 giờ/ngày chỉ là một mốc tham khảo, không phải luật cứng. Hãy chọn mức phù hợp với công việc và nhịp hồi phục của bạn.",
+                "Four hours a day is one person's standard, not a rule. Pick what fits your work and your recovery."
+            ))
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Picker("Daily goal", selection: $model.data.dailyGoal) {
+            Picker(model.t("Mục tiêu mỗi ngày", "Daily goal"), selection: $model.data.dailyGoal) {
                 ForEach(1...4, id: \.self) { hrs in
-                    Text("\(hrs) \(hrs == 1 ? "hour" : "hours")").tag(hrs)
+                    Text("\(hrs) \(model.t("giờ", hrs == 1 ? "hour" : "hours"))").tag(hrs)
                 }
             }
             .onChange(of: model.data.dailyGoal) { _, _ in model.save() }
 
-            Toggle("Count weekends", isOn: $model.data.countWeekends)
+            Toggle(model.t("Tính cả cuối tuần", "Count weekends"), isOn: $model.data.countWeekends)
                 .onChange(of: model.data.countWeekends) { _, _ in model.save() }
 
-            Picker("Break length", selection: $model.data.breakMinutes) {
-                Text("5 minutes").tag(5)
-                Text("10 minutes").tag(10)
-                Text("15 minutes").tag(15)
+            Picker(model.t("Thời gian nghỉ", "Break length"), selection: $model.data.breakMinutes) {
+                Text(model.t("5 phút", "5 minutes")).tag(5)
+                Text(model.t("10 phút", "10 minutes")).tag(10)
+                Text(model.t("15 phút", "15 minutes")).tag(15)
             }
             .onChange(of: model.data.breakMinutes) { _, _ in model.save() }
 
-            Toggle("Raise the goal by itself", isOn: $model.data.autoLevelUp)
+            Toggle(model.t("Tự động tăng mục tiêu", "Raise the goal by itself"), isOn: $model.data.autoLevelUp)
                 .onChange(of: model.data.autoLevelUp) { _, _ in model.save() }
         }
         .padding(Space.lg)

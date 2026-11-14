@@ -37,9 +37,12 @@ struct StickyWallView: View {
             VStack(alignment: .leading, spacing: Space.lg) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: Space.xs) {
-                        Text("\(filteredHours.count) notes on the wall\(model.wallRange == .week ? " this week" : "")")
+                        Text(model.t(
+                            "\(filteredHours.count) ghi chú trên bảng\(model.wallRange == .week ? " tuần này" : "")",
+                            "\(filteredHours.count) notes on the wall\(model.wallRange == .week ? " this week" : "")"
+                        ))
                             .font(.system(size: 32, weight: .bold))
-                        Text("Every note is one finished hour. Evidence beats intention.")
+                        Text(model.t("Mỗi ghi chú là một giờ hoàn thành. Bằng chứng thắng ý định.", "Every note is one finished hour. Evidence beats intention."))
                             .font(.body)
                             .foregroundStyle(.secondary)
                     }
@@ -47,15 +50,15 @@ struct StickyWallView: View {
                     Spacer()
 
                     HStack(spacing: Space.lg) {
-                        statBlock(title: "Streak", value: "\(model.streakDays) days")
-                        statBlock(title: "Distractions / hour", value: avgDistractions)
-                        statBlock(title: "Outcomes hit", value: "\(outcomesHitCount) of \(filteredHours.count)")
+                        statBlock(title: model.t("Chuỗi ngày", "Streak"), value: "\(model.streakDays) \(model.t("ngày", "days"))")
+                        statBlock(title: model.t("Xao nhãng / giờ", "Distractions / hour"), value: avgDistractions)
+                        statBlock(title: model.t("Đạt mục tiêu", "Outcomes hit"), value: "\(outcomesHitCount) / \(filteredHours.count)")
                     }
                 }
 
-                Picker("Range", selection: $model.wallRange) {
+                Picker(model.t("Khoảng thời gian", "Range"), selection: $model.wallRange) {
                     ForEach(WallRange.allCases) { range in
-                        Text(range.rawValue).tag(range)
+                        Text(model.wallRangeTitle(range)).tag(range)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -72,7 +75,7 @@ struct StickyWallView: View {
             .padding(Space.xl)
             .gridArea("stickyWall")
         }
-        .navigationTitle("Sticky Wall")
+        .navigationTitle(model.t("Bảng ghi chú", "Sticky Wall"))
     }
 
     private func statBlock(title: String, value: String) -> some View {

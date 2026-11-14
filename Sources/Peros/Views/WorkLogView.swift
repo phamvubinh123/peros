@@ -20,9 +20,9 @@ struct WorkLogView: View {
             VStack(alignment: .leading, spacing: Space.lg) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: Space.xs) {
-                        Text("Every hour, on the record")
+                        Text(model.t("Mỗi giờ làm, đều được ghi lại", "Every hour, on the record"))
                             .font(.system(size: 32, weight: .bold))
-                        Text("Date, outcome, distractions, finish time. Saved on this Mac. No form to fill.")
+                        Text(model.t("Ngày, mục tiêu, số lần xao nhãng, giờ xong. Lưu ngay trên máy Mac.", "Date, outcome, distractions, finish time. Saved on this Mac. No form to fill."))
                             .font(.body)
                             .foregroundStyle(.secondary)
                     }
@@ -30,11 +30,11 @@ struct WorkLogView: View {
                     Spacer()
 
                     HStack(spacing: Space.sm) {
-                        TextField("Search outcomes", text: $model.workLogSearch)
+                        TextField(model.t("Tìm kiếm mục tiêu", "Search outcomes"), text: $model.workLogSearch)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 200)
 
-                        Button("Export CSV") {
+                        Button(model.t("Xuất CSV", "Export CSV")) {
                             model.exportWorkLogCSV()
                         }
                         .buttonStyle(.bordered)
@@ -52,18 +52,18 @@ struct WorkLogView: View {
             .padding(Space.xl)
             .gridArea("workLog")
         }
-        .navigationTitle("Work Log")
+        .navigationTitle(model.t("Nhật ký giờ làm", "Work Log"))
     }
 
     private var logTable: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Date").frame(width: 68, alignment: .leading)
-                Text("Outcome").frame(maxWidth: .infinity, alignment: .leading)
-                Text("Distr.").frame(width: 44, alignment: .trailing)
-                Text("Top cause").frame(width: 92, alignment: .leading)
-                Text("Finished").frame(width: 72, alignment: .leading)
-                Text("Result").frame(width: 72, alignment: .trailing)
+                Text(model.t("Ngày", "Date")).frame(width: 68, alignment: .leading)
+                Text(model.t("Mục tiêu", "Outcome")).frame(maxWidth: .infinity, alignment: .leading)
+                Text(model.t("Nhiễu", "Distr.")).frame(width: 44, alignment: .trailing)
+                Text(model.t("Nguyên nhân", "Top cause")).frame(width: 92, alignment: .leading)
+                Text(model.t("Giờ xong", "Finished")).frame(width: 72, alignment: .leading)
+                Text(model.t("Kết quả", "Result")).frame(width: 72, alignment: .trailing)
             }
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(.secondary)
@@ -92,7 +92,7 @@ struct WorkLogView: View {
                             .font(.body.monospacedDigit())
                             .frame(width: 48, alignment: .trailing)
 
-                        Text(hour.topCause.shortTitle)
+                        Text(model.causeShortTitle(hour.topCause))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .frame(width: 100, alignment: .leading)
@@ -130,7 +130,7 @@ struct WorkLogView: View {
             fg = .secondary
             bg = Surfaces.cardMuted
         }
-        return Text(result.title)
+        return Text(model.resultTitle(result))
             .font(.caption2.weight(.semibold))
             .foregroundStyle(fg)
             .padding(.horizontal, 8)
@@ -148,7 +148,7 @@ struct WorkLogView: View {
         return VStack(spacing: Space.md) {
             VStack(alignment: .leading, spacing: Space.sm) {
                 HStack {
-                    Text("What pulls you away")
+                    Text(model.t("Điều gì kéo bạn ra ngoài", "What pulls you away"))
                         .font(.headline)
                     Spacer()
                     Text("\(totalDistractions)")
@@ -157,14 +157,14 @@ struct WorkLogView: View {
                 }
 
                 if causes.isEmpty {
-                    Text("No distractions logged yet.")
+                    Text(model.t("Chưa ghi nhận lần xao nhãng nào.", "No distractions logged yet."))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(causes) { stat in
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
-                                Text(stat.cause.title)
+                                Text(model.causeTitle(stat.cause))
                                     .font(.caption)
                                 Spacer()
                                 Text("\(stat.count)")
@@ -185,7 +185,7 @@ struct WorkLogView: View {
             .overlay(RoundedRectangle(cornerRadius: Radius.md).stroke(Surfaces.hairline, lineWidth: 1))
 
             VStack(alignment: .leading, spacing: Space.sm) {
-                Text("Distractions per hour slot")
+                Text(model.t("Xao nhãng theo khung giờ", "Distractions per hour slot"))
                     .font(.headline)
 
                 HStack(alignment: .bottom, spacing: Space.sm) {
@@ -199,7 +199,7 @@ struct WorkLogView: View {
                                 .fill(Palette.accent.opacity(0.8))
                                 .frame(height: max(8, 64 * CGFloat(slot.averageDistractions / maxSlotAvg)))
 
-                            Text("Hour \(slot.slotIndex)")
+                            Text("\(model.t("Giờ", "Hour")) \(slot.slotIndex)")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                         }

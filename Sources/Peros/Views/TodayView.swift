@@ -21,21 +21,21 @@ struct TodayView: View {
             .padding(Space.xl)
             .gridArea("today")
         }
-        .navigationTitle("Today")
+        .navigationTitle(model.t("Hôm nay", "Today"))
     }
 
     private var headerBar: some View {
         let totalSlots = max(model.data.dailyGoal, 4)
         let doneCount = model.todayHours.count
         return HStack(alignment: .center) {
-            Text("Today · \(Date.now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))")
+            Text("\(model.t("Hôm nay", "Today")) · \(Date.now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))")
                 .font(.headline.weight(.medium))
                 .foregroundStyle(.secondary)
 
             Spacer()
 
             HStack(spacing: Space.sm) {
-                Text("Focused hours")
+                Text(model.t("Giờ tập trung", "Focused hours"))
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
 
@@ -58,7 +58,7 @@ struct TodayView: View {
         HStack(spacing: Space.sm) {
             ForEach(FocusStep.allCases) { step in
                 let isActive = model.currentStep == step
-                Text(step.title)
+                Text(model.stepTitle(step))
                     .font(.subheadline.weight(isActive ? .semibold : .medium))
                     .foregroundStyle(isActive ? Palette.onAccent : .secondary)
                     .padding(.horizontal, Space.md)
@@ -93,24 +93,27 @@ struct TodayView: View {
         @Bindable var model = model
         return HStack(alignment: .top, spacing: Space.lg) {
             VStack(alignment: .leading, spacing: Space.md) {
-                Text("HOUR \(model.activeSlotIndex) OF \(max(model.data.dailyGoal, 4))")
+                Text(model.t("GIỜ \(model.activeSlotIndex) / \(max(model.data.dailyGoal, 4))", "HOUR \(model.activeSlotIndex) OF \(max(model.data.dailyGoal, 4))"))
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(Palette.accentText)
                     .tracking(0.8)
 
-                Text("What will exist at the end of this hour?")
+                Text(model.t("Cuối giờ này bạn sẽ tạo ra kết quả gì?", "What will exist at the end of this hour?"))
                     .font(.title.weight(.bold))
 
-                Text("One specific outcome. Not a topic. You should be able to say \"done\" or \"not done\" when the timer ends.")
+                Text(model.t(
+                    "Một đầu ra cụ thể, không phải chủ đề chung chung. Khi hết giờ bạn phải trả lời được là \"xong\" hay \"chưa xong\".",
+                    "One specific outcome. Not a topic. You should be able to say \"done\" or \"not done\" when the timer ends."
+                ))
                     .font(.body)
                     .foregroundStyle(.secondary)
 
                 VStack(alignment: .leading, spacing: Space.xs) {
-                    Text("Outcome")
+                    Text(model.t("Mục tiêu đầu ra", "Outcome"))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
 
-                    TextField("Untitled hour", text: $model.draftOutcome)
+                    TextField(model.t("Chưa đặt tên giờ tập trung", "Untitled hour"), text: $model.draftOutcome)
                         .textFieldStyle(.plain)
                         .font(.title3)
                         .padding(Space.sm)
@@ -122,7 +125,7 @@ struct TodayView: View {
                 }
 
                 VStack(alignment: .leading, spacing: Space.xs) {
-                    Text("Name the thing you will have finished. A number helps.")
+                    Text(model.t("Ghi rõ thứ bạn sẽ hoàn thành (có con số càng tốt).", "Name the thing you will have finished. A number helps."))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
 
@@ -135,14 +138,14 @@ struct TodayView: View {
                     Button {
                         model.startFocusHour()
                     } label: {
-                        Label("Start 60:00", systemImage: "play.fill")
+                        Label(model.t("Bắt đầu 60:00", "Start 60:00"), systemImage: "play.fill")
                             .padding(.horizontal, Space.sm)
                             .padding(.vertical, 4)
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
 
-                    Text("Starts focus timer & tracks distractions locally.")
+                    Text(model.t("Bật đồng hồ đếm ngược & theo dõi xao nhãng cục bộ.", "Starts focus timer & tracks distractions locally."))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -154,7 +157,7 @@ struct TodayView: View {
             .overlay(RoundedRectangle(cornerRadius: Radius.md).stroke(Surfaces.hairline, lineWidth: 1))
 
             VStack(alignment: .leading, spacing: Space.md) {
-                Text("Before you start")
+                Text(model.t("Trước khi bắt đầu", "Before you start"))
                     .font(.title3.weight(.semibold))
 
                 VStack(alignment: .leading, spacing: Space.sm) {
@@ -178,11 +181,11 @@ struct TodayView: View {
                 Divider()
 
                 VStack(alignment: .leading, spacing: Space.xs) {
-                    Text("Reward after this hour")
+                    Text(model.t("Phần thưởng sau giờ này", "Reward after this hour"))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
 
-                    TextField("Reward", text: $model.draftReward)
+                    TextField(model.t("Phần thưởng", "Reward"), text: $model.draftReward)
                         .font(.body)
                         .textFieldStyle(.roundedBorder)
                 }
@@ -275,9 +278,9 @@ struct TodayView: View {
             .overlay(RoundedRectangle(cornerRadius: Radius.md).stroke(Surfaces.hairline, lineWidth: 1))
 
             VStack(alignment: .leading, spacing: Space.sm) {
-                Text("Count a distraction")
+                Text(model.t("Đếm lần xao nhãng", "Count a distraction"))
                     .font(.headline)
-                Text("Notice it, tap once, and return to the outcome.")
+                Text(model.t("Nhận biết, bấm 1 lần rồi quay lại ngay với mục tiêu.", "Notice it, tap once, and return to the outcome."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -286,7 +289,7 @@ struct TodayView: View {
                         model.recordDistraction(cause: cause)
                     } label: {
                         HStack {
-                            Text("+1 \(cause.title)")
+                            Text("+1 \(model.causeTitle(cause))")
                             Spacer()
                             let count = model.activeCauseCounts[cause] ?? 0
                             if count > 0 {
@@ -388,10 +391,10 @@ struct TodayView: View {
                         model.selectSlot(slot)
                     } label: {
                         VStack(alignment: .leading, spacing: Space.xs) {
-                            Text(isCurrent ? "HOUR \(slot) · NOW" : "HOUR \(slot)")
+                            Text(isCurrent ? model.t("GIỜ \(slot) · HIỆN TẠI", "HOUR \(slot) · NOW") : model.t("GIỜ \(slot)", "HOUR \(slot)"))
                                 .font(.caption.weight(.bold))
                                 .foregroundStyle(isCurrent ? Palette.accentText : .secondary)
-                            Text(isCurrent ? "Choosing outcome..." : "Not planned yet")
+                            Text(isCurrent ? model.t("Đang chọn mục tiêu...", "Choosing outcome...") : model.t("Chưa lên kế hoạch", "Not planned yet"))
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }

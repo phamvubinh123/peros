@@ -8,9 +8,9 @@ struct RitualsGoalsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Space.lg) {
                 VStack(alignment: .leading, spacing: Space.xs) {
-                    Text("Set up the day. Close it down.")
+                    Text(model.t("Khởi động ngày mới. Khép lại gọn gàng.", "Set up the day. Close it down."))
                         .font(.system(size: 32, weight: .bold))
-                    Text("Your environment and habits should push you toward the next focused hour.")
+                    Text(model.t("Môi trường và thói quen nên tự đẩy bạn tới giờ tập trung tiếp theo.", "Your environment and habits should push you toward the next focused hour."))
                         .font(.body)
                         .foregroundStyle(.secondary)
                 }
@@ -26,17 +26,17 @@ struct RitualsGoalsView: View {
             .padding(Space.xl)
             .gridArea("ritualsGoals")
         }
-        .navigationTitle("Rituals & Goals")
+        .navigationTitle(model.t("Nghi thức & Mục tiêu", "Rituals & Goals"))
     }
 
     private var morningCard: some View {
         let doneCount = model.data.morningChecklist.filter(\.isCompleted).count
         return VStack(alignment: .leading, spacing: Space.md) {
             HStack {
-                Text("Morning · 20 min")
+                Text(model.t("Buổi sáng · 20 phút", "Morning · 20 min"))
                     .font(.headline)
                 Spacer()
-                Text("\(doneCount) of \(model.data.morningChecklist.count)")
+                Text("\(doneCount)/\(model.data.morningChecklist.count)")
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.secondary)
             }
@@ -70,7 +70,7 @@ struct RitualsGoalsView: View {
             Button {
                 model.sidebar = .today
             } label: {
-                Text("Plan today's \(model.data.dailyGoal) outcomes")
+                Text(model.t("Lập \(model.data.dailyGoal) mục tiêu hôm nay", "Plan today's \(model.data.dailyGoal) outcomes"))
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -85,7 +85,7 @@ struct RitualsGoalsView: View {
     private var fiveGoalsCard: some View {
         @Bindable var model = model
         return VStack(alignment: .leading, spacing: Space.md) {
-            Text("Five goals")
+            Text(model.t("Năm mục tiêu lớn", "Five goals"))
                 .font(.headline)
 
             VStack(alignment: .leading, spacing: Space.xs) {
@@ -141,19 +141,19 @@ struct RitualsGoalsView: View {
 
         return VStack(alignment: .leading, spacing: Space.md) {
             HStack {
-                Text("Night · 4 min")
+                Text(model.t("Buổi tối · 4 phút", "Night · 4 min"))
                     .font(.headline)
                     .foregroundStyle(Surfaces.nightCardInk)
                 Spacer()
-                Text("Evening review")
+                Text(model.t("Tổng kết cuối ngày", "Evening review"))
                     .font(.caption)
                     .foregroundStyle(Surfaces.nightCardMuted)
             }
 
             HStack(spacing: Space.lg) {
-                nightStat(label: "Hours", value: "\(doneToday)/\(model.data.dailyGoal)")
-                nightStat(label: "Distr./h", value: avgDistr)
-                nightStat(label: "Hit", value: "\(hitToday)/\(max(1, doneToday))")
+                nightStat(label: model.t("Giờ", "Hours"), value: "\(doneToday)/\(model.data.dailyGoal)")
+                nightStat(label: model.t("Nhiễu/giờ", "Distr./h"), value: avgDistr)
+                nightStat(label: model.t("Đạt", "Hit"), value: "\(hitToday)/\(max(1, doneToday))")
             }
 
             Divider().overlay(Color.white.opacity(0.12))

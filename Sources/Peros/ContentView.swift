@@ -23,7 +23,7 @@ struct ContentView: View {
         @Bindable var model = model
         return VStack(spacing: 0) {
             List(SidebarItem.allCases, selection: $model.sidebar) { page in
-                Label(page.title, systemImage: page.symbol)
+                Label(model.sidebarTitle(page), systemImage: page.symbol)
                     .font(.body)
                     .padding(.vertical, 4)
                     .tag(page)
@@ -31,28 +31,47 @@ struct ContentView: View {
 
             Spacer(minLength: Space.sm)
 
+            languageSwitch
+                .padding(.horizontal, Space.sm)
+                .padding(.bottom, Space.xs)
+
             levelCard
                 .padding(.horizontal, Space.sm)
                 .padding(.bottom, Space.md)
         }
-        .navigationSplitViewColumnWidth(min: 220, ideal: 248)
+        .navigationSplitViewColumnWidth(min: 224, ideal: 252)
+    }
+
+    private var languageSwitch: some View {
+        @Bindable var model = model
+        return Picker(model.t("Ngôn ngữ", "Language"), selection: $model.data.language) {
+            ForEach(AppLanguage.allCases) { lang in
+                Text(lang.displayName).tag(lang)
+            }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .onChange(of: model.data.language) { _, _ in model.save() }
     }
 
     private var levelCard: some View {
         let summary = model.capacitySummary
         return VStack(alignment: .leading, spacing: Space.xs) {
-            Text("CURRENT LEVEL")
+            Text(model.t("CẤP ĐỘ HIỆN TẠI", "CURRENT LEVEL"))
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .tracking(0.6)
 
-            Text("\(summary.currentHoursPerDay) \(summary.currentHoursPerDay == 1 ? "hour" : "hours") / day")
+            Text("\(summary.currentHoursPerDay) \(model.t("giờ / ngày", summary.currentHoursPerDay == 1 ? "hour / day" : "hours / day"))")
                 .font(.title2.weight(.bold))
 
-            Text("\(summary.daysHitInLast7) of 5 days hit this week · \(summary.daysNeededToLevelUp) more to level up.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            Text(model.t(
+                "Đạt \(summary.daysHitInLast7)/5 ngày tuần này · Còn \(summary.daysNeededToLevelUp) ngày để lên cấp.",
+                "\(summary.daysHitInLast7) of 5 days hit this week · \(summary.daysNeededToLevelUp) more to level up."
+            ))
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Space.sm)
@@ -76,6 +95,8 @@ struct ContentView: View {
             ProgressDashboardView()
         case .ritualsGoals:
             RitualsGoalsView()
+        case .userGuide:
+            UserGuideView()
         }
     }
 }
