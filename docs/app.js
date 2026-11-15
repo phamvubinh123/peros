@@ -108,6 +108,111 @@ function escapeHtml(str) {
     .replaceAll('"', "&quot;");
 }
 
+function micButtonHtml(targetId) {
+  const label = t("Nhập bằng giọng nói", "Voice input");
+  return `
+    <button type="button" class="btn-mic" data-mic-target="${targetId}" aria-label="${label}" title="${label}">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="3" width="6" height="11" rx="3" />
+        <path d="M5 11a7 7 0 0 0 14 0" />
+        <line x1="12" y1="18" x2="12" y2="21" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+      </svg>
+    </button>
+  `;
+}
+
+const voiceState = {
+  recognition: null,
+  targetId: null,
+  buttonEl: null,
+};
+
+function stopVoiceInput() {
+  if (voiceState.recognition) {
+    try {
+      voiceState.recognition.onend = null;
+      voiceState.recognition.stop();
+    } catch {
+      // ignore stop errors
+    }
+  }
+  if (voiceState.buttonEl) {
+    voiceState.buttonEl.classList.remove("listening");
+    voiceState.buttonEl.title = t("Nhập bằng giọng nói", "Voice input");
+  }
+  voiceState.recognition = null;
+  voiceState.targetId = null;
+  voiceState.buttonEl = null;
+}
+
+function toggleVoiceInput(targetId, btnEl) {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    alert(t(
+      "Trình duyệt này chưa hỗ trợ nhập liệu giọng nói (Web Speech API). Hãy dùng Safari hoặc Chrome.",
+      "Voice input is not supported in this browser. Please use Safari or Chrome."
+    ));
+    return;
+  }
+
+  if (voiceState.targetId === targetId && voiceState.recognition) {
+    stopVoiceInput();
+    return;
+  }
+
+  stopVoiceInput();
+
+  const targetEl = document.getElementById(targetId);
+  if (!targetEl) return;
+
+  const rec = new SpeechRec();
+  rec.lang = state.language === "vi" ? "vi-VN" : "en-US";
+  rec.interimResults = true;
+  rec.continuous = false;
+
+  const existing = targetEl.value || "";
+  const separator = existing && !/\s$/.test(existing) ? " " : "";
+  const baseText = existing + separator;
+
+  voiceState.recognition = rec;
+  voiceState.targetId = targetId;
+  voiceState.buttonEl = btnEl;
+  btnEl.classList.add("listening");
+  btnEl.title = t("Đang nghe... bấm để dừng", "Listening... tap to stop");
+
+  rec.onresult = (event) => {
+    let transcript = "";
+    for (let i = 0; i < event.results.length; i++) {
+      transcript += event.results[i][0]?.transcript || "";
+    }
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    el.value = baseText + transcript.trim();
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  rec.onerror = (event) => {
+    if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+      alert(t(
+        "Vui lòng cấp quyền Micro cho trình duyệt để dùng tính năng giọng nói.",
+        "Please allow microphone permission in your browser to use voice input."
+      ));
+    }
+    stopVoiceInput();
+  };
+
+  rec.onend = () => {
+    stopVoiceInput();
+  };
+
+  try {
+    rec.start();
+  } catch {
+    stopVoiceInput();
+  }
+}
+
 function todayHours() {
   const now = new Date();
   return state.hours
@@ -312,7 +417,10 @@ function renderToday() {
             </div>
             <div>
               <label style="display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;">${t("Mục tiêu đầu ra (Outcome)", "Concrete Outcome")}</label>
-              <input class="input-text" id="outcomeInput" placeholder="${t("Chưa đặt tên giờ tập trung", "Untitled hour")}" value="${escapeHtml(session.outcome)}" />
+              <div class="input-with-mic">
+                <input class="input-text" id="outcomeInput" placeholder="${t("Chưa đặt tên giờ tập trung", "Untitled hour")}" value="${escapeHtml(session.outcome)}" />
+                ${micButtonHtml("outcomeInput")}
+              </div>
             </div>
           </div>
 
@@ -390,10 +498,13 @@ function renderToday() {
             <label style="display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;">
               📝 ${t("Ghi chú nháp trong phiên (Session Scratchpad — tự lưu vào Kho tri thức khi xong)", "Session Scratchpad (auto-saves to Project Notes on finish)")}
             </label>
-            <textarea class="textarea-text" id="sessionScratchpadInput" placeholder="${t(
-              "Viết nhanh dàn ý, kết quả, hoặc những gì bạn vừa làm xong trong giờ này...",
-              "Jot down key outputs, links, or progress produced during this hour..."
-            )}" style="min-height:88px;">${escapeHtml(session.scratchpad)}</textarea>
+            <div class="input-with-mic">
+              <textarea class="textarea-text" id="sessionScratchpadInput" placeholder="${t(
+                "Viết nhanh dàn ý, kết quả, hoặc những gì bạn vừa làm xong trong giờ này...",
+                "Jot down key outputs, links, or progress produced during this hour..."
+              )}" style="min-height:88px;">${escapeHtml(session.scratchpad)}</textarea>
+              ${micButtonHtml("sessionScratchpadInput")}
+            </div>
           </div>
         </div>
 
@@ -440,7 +551,10 @@ function renderToday() {
           <label style="display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;">
             ${t("Bằng chứng / Ghi chú lưu vào dự án:", "Output summary / Note saved to Project:")}
           </label>
-          <textarea class="textarea-text" id="recordScratchpadInput" style="min-height:80px;">${escapeHtml(session.scratchpad)}</textarea>
+          <div class="input-with-mic">
+            <textarea class="textarea-text" id="recordScratchpadInput" style="min-height:80px;">${escapeHtml(session.scratchpad)}</textarea>
+            ${micButtonHtml("recordScratchpadInput")}
+          </div>
         </div>
         <div style="display:flex;gap:12px;">
           <button class="btn-primary" data-result="Done">${t("Xong (Done)", "Done")}</button>
@@ -580,11 +694,14 @@ function renderWorkspaceInbox() {
   return `
     <div class="card" style="margin-bottom:24px;">
       <h3 style="margin:0 0 12px;font-size:18px;">${t("Thu thập nhanh vào Hộp thư đến", "Quick Capture to Inbox")}</h3>
-      <div style="display:flex;gap:12px;">
-        <input class="input-text" id="inlineInboxInput" placeholder="${t(
-          "Gõ ý tưởng, việc cần làm, hoặc tài liệu tham khảo...",
-          "Type a thought, action item, or reference..."
-        )}" />
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div class="input-with-mic" style="flex:1;min-width:200px;">
+          <input class="input-text" id="inlineInboxInput" placeholder="${t(
+            "Gõ ý tưởng, việc cần làm, hoặc tài liệu tham khảo...",
+            "Type a thought, action item, or reference..."
+          )}" />
+          ${micButtonHtml("inlineInboxInput")}
+        </div>
         <button class="btn-primary" id="inlineInboxAddBtn">${t("+ Thêm vào Inbox", "+ Add to Inbox")}</button>
       </div>
     </div>
@@ -863,7 +980,10 @@ function renderWorkspaceNotes() {
             <label style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;">
               Markdown Body (${t("Dùng [[Tên Note]] để liên kết 2 chiều", "Use [[Note Title]] for bi-directional links")})
             </label>
-            <textarea class="textarea-text" id="noteBodyInput" style="min-height:200px;">${escapeHtml(selectedNote.body)}</textarea>
+            <div class="input-with-mic">
+              <textarea class="textarea-text" id="noteBodyInput" style="min-height:200px;">${escapeHtml(selectedNote.body)}</textarea>
+              ${micButtonHtml("noteBodyInput")}
+            </div>
           </div>
 
           <div class="grid-2-equal" style="border-top:1px solid var(--hairline);padding-top:16px;">
@@ -2271,11 +2391,18 @@ document.getElementById("closeSyncModalBtn").addEventListener("click", () => {
   document.getElementById("syncModal").classList.add("hidden");
 });
 
+document.addEventListener("click", (e) => {
+  const micBtn = e.target.closest("[data-mic-target]");
+  if (!micBtn) return;
+  toggleVoiceInput(micBtn.dataset.micTarget, micBtn);
+});
+
 window.addEventListener("keydown", (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
     e.preventDefault();
     openQuickCaptureModal();
   } else if (e.key === "Escape") {
+    stopVoiceInput();
     closeMobileDrawer();
     closeQuickCaptureModal();
     document.getElementById("syncModal")?.classList.add("hidden");
