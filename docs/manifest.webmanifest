@@ -1,0 +1,18 @@
+{
+  "name": "PerOS — Personal OS",
+  "short_name": "PerOS",
+  "description": "Local-first Personal OS for deep focus training, PARA projects, and knowledge execution across Windows and macOS.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF9F6",
+  "theme_color": "#C85A32",
+  "icons": [
+    {
+      "src": "./favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,40 +1,90 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Peros — Train Focus Like a Skill</title>
+  <meta name="theme-color" content="#C85A32" />
+  <title>PerOS — Personal OS</title>
   <link rel="icon" type="image/png" href="./favicon.png" />
+  <link rel="apple-touch-icon" href="./favicon.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand-row">
-        <img src="./favicon.png" alt="Peros" class="brand-icon" />
-        <span class="brand-name">Peros</span>
+        <img src="./favicon.png" alt="PerOS" class="brand-icon" />
+        <div class="brand-meta">
+          <span class="brand-name">PerOS</span>
+          <span class="brand-tag">Personal OS</span>
+        </div>
       </div>
 
-      <nav class="nav-list" id="navList">
-        <button class="nav-item active" data-page="today">Today</button>
-        <button class="nav-item" data-page="stickyWall">Sticky Wall</button>
-        <button class="nav-item" data-page="workLog">Work Log</button>
-        <button class="nav-item" data-page="progress">Progress</button>
-        <button class="nav-item" data-page="ritualsGoals">Rituals &amp; Goals</button>
-      </nav>
+      <button class="quick-capture-btn" id="openQuickCaptureBtn" title="Quick Capture (Ctrl+K / ⌘K)">
+        <span class="qc-label" id="sidebarQuickCaptureLabel">+ Quick Capture</span>
+        <kbd class="kbd-badge">⌘K</kbd>
+      </button>
+
+      <nav class="nav-list" id="navList" aria-label="PerOS Navigation"></nav>
 
       <div class="sidebar-bottom">
+        <div class="lang-switch" id="langSwitch" role="group" aria-label="Language">
+          <button class="lang-btn" data-lang="vi">Tiếng Việt</button>
+          <button class="lang-btn" data-lang="en">English</button>
+        </div>
+
         <div class="level-card" id="sidebarLevelCard"></div>
+
         <div class="sidebar-actions">
           <button class="btn-ghost" id="toggleThemeBtn" title="Toggle Light / Dark">Theme</button>
-          <button class="btn-ghost" id="seedDemoBtn" title="Load sample data">Demo Data</button>
+          <button class="btn-ghost" id="openSyncModalBtn" title="Cloud Sync & Backup">Sync</button>
+          <button class="btn-ghost" id="seedDemoBtn" title="Reset sample data">Demo</button>
         </div>
       </div>
     </aside>
 
-    <main class="main-content" id="mainContent"></main>
+    <main class="main-content" id="mainContent" data-grid-area="main"></main>
   </div>
 
-  <script src="./app.js"></script>
+  <!-- Quick Capture Modal (Ctrl+K / ⌘K) -->
+  <div class="modal-backdrop hidden" id="quickCaptureModal" role="dialog" aria-modal="true" aria-labelledby="qcModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <div class="kicker" id="qcModalKicker">QUICK CAPTURE · CTRL+K / ⌘K</div>
+          <h3 class="modal-title" id="qcModalTitle">Capture to PerOS Inbox</h3>
+        </div>
+        <button class="btn-icon" id="closeQuickCaptureBtn" aria-label="Close">✕</button>
+      </div>
+      <p class="page-subtitle" id="qcModalSub" style="margin-bottom:12px;">
+        Drop a thought, task, or reference link into your Inbox in 3 seconds, then return to what you were doing.
+      </p>
+      <input class="input-text" id="quickCaptureInput" placeholder="What's on your mind?" autocomplete="off" />
+      <div class="modal-row" style="margin-top:12px;">
+        <select class="input-text" id="quickCaptureTargetProject" style="max-width:240px;"></select>
+        <div class="modal-actions">
+          <button class="btn-secondary" id="saveToProjectOutcomeBtn">+ Project Outcome</button>
+          <button class="btn-primary" id="saveToInboxBtn">Save to Inbox ↵</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cloud Sync & JSON Backup Modal -->
+  <div class="modal-backdrop hidden" id="syncModal" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
+    <div class="modal-card" style="max-width:600px;">
+      <div class="modal-header">
+        <div>
+          <div class="kicker">WINDOWS ↔ MAC HANDOFF</div>
+          <h3 class="modal-title" id="syncModalTitle">PerOS Cloud Sync &amp; Local Backup</h3>
+        </div>
+        <button class="btn-icon" id="closeSyncModalBtn" aria-label="Close">✕</button>
+      </div>
+      <div id="syncModalBody"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
