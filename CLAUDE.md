@@ -25,6 +25,14 @@ SwiftData database and no server.
 - Then check the grid: `tools/grid-lint.sh` and `swift tools/check-layout.swift /tmp/Peros-shots/*-layout.json`. Both print PASS.
 - A change is done when the build has no errors, the grid checks pass, and you looked at the light and dark snapshots.
 
+## Web version (BAMA Web QA)
+
+- Web files live in `docs/` (`index.html`, `styles.css`, `app.js`, `peros-kit.js`, `manifest.webmanifest`, `sw.js`).
+- After every change to the web version, run all 3 BAMA Web QA checks and make sure they pass:
+  ```sh
+  node tools/web-selftest.mjs && ./tools/web-grid-lint.sh && node tools/web-snap.mjs
+  ```
+
 ## Design rules
 
 - Use Apple's controls and system styles. Only the accent color is custom: `UI/Theme.swift` (`ThemeStore.defaultID`). People change it, and light or dark mode, in Settings > Appearance.

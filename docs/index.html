@@ -2,7 +2,7 @@
 <html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#C85A32" />
   <title>PerOS — Personal OS</title>
   <link rel="icon" type="image/png" href="./favicon.png" />
@@ -12,13 +12,31 @@
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar">
+    <header class="mobile-topbar">
+      <button class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="4" y1="7" x2="20" y2="7" />
+          <line x1="4" y1="12" x2="20" y2="12" />
+          <line x1="4" y1="17" x2="20" y2="17" />
+        </svg>
+      </button>
+      <div class="mobile-top-brand">
+        <img src="./favicon.png" alt="PerOS" class="mobile-top-icon" />
+        <span class="mobile-top-title" id="mobileTopTitle">PerOS</span>
+      </div>
+      <button class="btn-primary mobile-qc-btn" id="mobileQuickCaptureBtn" aria-label="Quick Capture">+</button>
+    </header>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="sidebar" id="sidebar">
       <div class="brand-row">
         <img src="./favicon.png" alt="PerOS" class="brand-icon" />
         <div class="brand-meta">
           <span class="brand-name">PerOS</span>
           <span class="brand-tag">Personal OS</span>
         </div>
+        <button class="btn-icon sidebar-close-btn" id="closeSidebarBtn" aria-label="Close navigation">✕</button>
       </div>
 
       <button class="quick-capture-btn" id="openQuickCaptureBtn" title="Quick Capture (Ctrl+K / ⌘K)">
@@ -45,6 +63,7 @@
     </aside>
 
     <main class="main-content" id="mainContent" data-grid-area="main"></main>
+    <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile Navigation"></nav>
   </div>
 
   <!-- Quick Capture Modal (Ctrl+K / ⌘K) -->

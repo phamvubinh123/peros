@@ -50,10 +50,26 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+function resolveChromeBinary() {
+  const candidates = [
+    process.env.CHROME_BIN,
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+    "/usr/bin/google-chrome",
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+  ].filter(Boolean);
+  const found = candidates.find((p) => fs.existsSync(p));
+  if (!found) {
+    throw new Error(`No Chromium/Chrome binary found. Checked: ${candidates.join(", ")}`);
+  }
+  return found;
+}
+
 async function launchChromiumCdp(debugPort = 9229) {
   const userDataDir = `/tmp/peros-chrome-profile-${Date.now()}`;
   const proc = spawn(
-    "/usr/bin/chromium",
+    resolveChromeBinary(),
     [
       "--headless=new",
       "--no-sandbox",

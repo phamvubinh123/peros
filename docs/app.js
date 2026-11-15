@@ -217,6 +217,35 @@ function renderSidebar() {
     )
     .join("");
 
+  const activeNav = navItems.find((n) => n.id === state.page) || navItems[0];
+  const mobileTopTitle = document.getElementById("mobileTopTitle");
+  if (mobileTopTitle) mobileTopTitle.textContent = activeNav.label;
+
+  const mobileBottomNav = document.getElementById("mobileBottomNav");
+  if (mobileBottomNav) {
+    const quickTabs = [
+      { id: "today", label: t("Hôm nay", "Today") },
+      { id: "workspace", label: t("Không gian", "Workspace") },
+      { id: "stickyWall", label: t("Ghi chú", "Sticky") },
+      { id: "workLog", label: t("Nhật ký", "Log") },
+    ];
+    const inMore = ["progress", "ritualsGoals", "userGuide"].includes(state.page);
+    mobileBottomNav.innerHTML =
+      quickTabs
+        .map(
+          (item) => `
+        <button class="mobile-bottom-btn ${state.page === item.id ? "active" : ""}" data-page="${item.id}">
+          ${NAV_ICONS[item.id] || ""}
+          <span>${escapeHtml(item.label)}</span>
+        </button>`
+        )
+        .join("") +
+      `<button class="mobile-bottom-btn ${inMore ? "active" : ""}" data-action="open-drawer">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="18" cy="12" r="1.5" fill="currentColor"/></svg>
+        <span>${t("Thêm", "More")}</span>
+      </button>`;
+  }
+
   document.querySelectorAll("#langSwitch .lang-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.lang === state.language);
   });
@@ -269,7 +298,7 @@ function renderToday() {
             "One concrete deliverable tied to your Project. When the timer ends, you can clearly mark it Done or Not done."
           )}</p>
 
-          <div style="display:grid;grid-template-columns:220px 1fr;gap:12px;margin-bottom:12px;">
+          <div class="today-setup-grid">
             <div>
               <label style="display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;">${t("Dự án / Lĩnh vực", "Project / Area")}</label>
               <select class="input-text" id="sessionProjectSelect">
@@ -1063,13 +1092,14 @@ function renderWorkLog() {
             )
             .join("")}
         </select>
-        <input class="input-text" id="workLogSearch" placeholder="${t("Tìm kiếm mục tiêu...", "Search outcomes...")}" value="${escapeHtml(state.workLogSearch)}" style="width:200px;" />
+        <input class="input-text search-input" id="workLogSearch" placeholder="${t("Tìm kiếm mục tiêu...", "Search outcomes...")}" value="${escapeHtml(state.workLogSearch)}" />
         <button class="btn-secondary" id="exportCsvBtn">${t("Xuất CSV", "Export CSV")}</button>
       </div>
     </div>
 
     <div class="grid-2">
       <div class="card" style="padding:0;overflow:hidden;">
+        <div class="table-scroll">
         <table class="log-table">
           <thead>
             <tr>
@@ -1102,6 +1132,7 @@ function renderWorkLog() {
               .join("")}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:16px;">
@@ -2132,10 +2163,42 @@ function bindPageEvents() {
 
 // MARK: - Global Listeners & Shortcuts
 
+function openMobileDrawer() {
+  document.getElementById("sidebar")?.classList.add("open");
+  document.getElementById("sidebarBackdrop")?.classList.add("open");
+}
+
+function closeMobileDrawer() {
+  document.getElementById("sidebar")?.classList.remove("open");
+  document.getElementById("sidebarBackdrop")?.classList.remove("open");
+}
+
+document.getElementById("mobileMenuBtn")?.addEventListener("click", openMobileDrawer);
+document.getElementById("closeSidebarBtn")?.addEventListener("click", closeMobileDrawer);
+document.getElementById("sidebarBackdrop")?.addEventListener("click", closeMobileDrawer);
+document.getElementById("mobileQuickCaptureBtn")?.addEventListener("click", openQuickCaptureModal);
+
+document.getElementById("mobileBottomNav")?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".mobile-bottom-btn");
+  if (!btn) return;
+  if (btn.dataset.action === "open-drawer") {
+    openMobileDrawer();
+    return;
+  }
+  if (btn.dataset.page) {
+    state.page = btn.dataset.page;
+    closeMobileDrawer();
+    saveState();
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+});
+
 document.getElementById("navList").addEventListener("click", (e) => {
   const btn = e.target.closest(".nav-item");
   if (!btn) return;
   state.page = btn.dataset.page;
+  closeMobileDrawer();
   saveState();
   render();
 });
@@ -2213,6 +2276,7 @@ window.addEventListener("keydown", (e) => {
     e.preventDefault();
     openQuickCaptureModal();
   } else if (e.key === "Escape") {
+    closeMobileDrawer();
     closeQuickCaptureModal();
     document.getElementById("syncModal")?.classList.add("hidden");
   }
