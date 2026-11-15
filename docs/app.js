@@ -176,11 +176,22 @@ function finishBreak() {
 
 // MARK: - Sidebar & Shell Rendering
 
+const NAV_ICONS = {
+  today: `<svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.5"/><path d="M10 5.5V10l3 2"/></svg>`,
+  workspace: `<svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5A1.5 1.5 0 0 1 4 5h3.6a1.5 1.5 0 0 1 1.1.48l1.1 1.04a1.5 1.5 0 0 0 1.1.48H16a1.5 1.5 0 0 1 1.5 1.5v6A1.5 1.5 0 0 1 16 16H4a1.5 1.5 0 0 1-1.5-1.5v-8Z"/><path d="M6.5 11.5h7"/></svg>`,
+  stickyWall: `<svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1.4"/><rect x="11" y="3" width="6" height="6" rx="1.4"/><rect x="3" y="11" width="6" height="6" rx="1.4"/><rect x="11" y="11" width="6" height="6" rx="1.4"/></svg>`,
+  workLog: `<svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="2"/><path d="M5.5 7.5h.01M5.5 10h.01M5.5 12.5h.01M8.5 7.5h6M8.5 10h6M8.5 12.5h6"/></svg>`,
+  progress: `<svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="3.2" height="5.5" rx="0.8"/><rect x="8.4" y="7.5" width="3.2" height="9" rx="0.8"/><rect x="13.8" y="4" width="3.2" height="12.5" rx="0.8"/></svg>`,
+  ritualsGoals: `<svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="3.5"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4"/></svg>`,
+  userGuide: `<svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5A1.5 1.5 0 0 1 5.5 2H15.5v13.5H5.5A1.5 1.5 0 0 0 4 17V3.5Z"/><path d="M4 16.5A1.5 1.5 0 0 0 5.5 18H16"/><path d="M7 2v13.5"/></svg>`,
+  bolt: `<svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2.5 4.5 11H10l-1 6.5 6.5-8.5H10l1-6.5Z"/></svg>`,
+};
+
 function renderSidebar() {
-  document.getElementById("sidebarQuickCaptureLabel").textContent = t(
-    "+ Thu thập nhanh",
-    "+ Quick Capture"
-  );
+  document.getElementById("sidebarQuickCaptureLabel").innerHTML = `
+    ${NAV_ICONS.bolt}
+    <span>${escapeHtml(t("Thu thập nhanh", "Quick Capture"))}</span>
+  `;
 
   const navItems = [
     { id: "today", label: t("Hôm nay", "Today"), badge: `${todayHours().length}/${Math.max(1, state.dailyGoal)}` },
@@ -196,7 +207,10 @@ function renderSidebar() {
     .map(
       (item) => `
       <button class="nav-item ${state.page === item.id ? "active" : ""}" data-page="${item.id}">
-        <span>${escapeHtml(item.label)}</span>
+        <span class="nav-item-main">
+          ${NAV_ICONS[item.id] || ""}
+          <span>${escapeHtml(item.label)}</span>
+        </span>
         ${item.badge ? `<span class="nav-badge">${escapeHtml(item.badge)}</span>` : ""}
       </button>
     `
